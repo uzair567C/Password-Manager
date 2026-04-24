@@ -38,32 +38,40 @@ public class passwordgenrator {
         int len = pswd.length();
         int strength = 0;
 
+        boolean w = true, x = true, y = true, z = true;
+
         for (int i = 0; i < pswd.length(); i++) {
             char c = pswd.charAt(i);
-            if (Character.isUpperCase(c))
+            if (Character.isUpperCase(c) && w) {
                 strength++;
-            else if (Character.isLowerCase(c))
+                w = false;
+            } else if (Character.isLowerCase(c) && x) {
                 strength++;
-            else if (Character.isDigit(c))
+                x = false;
+            } else if (Character.isDigit(c) && y) {
                 strength++;
-            else
-                strength++; // Assuming remaining are symbols
+                y = false;
+            } else if (z) {
+                strength++;
+                z = false;
+            }
         }
 
-        if (len < 4) {
+        if (len < 5) {
             return "Weak";
-        } else if (len < 8 && strength < 4) {
-
-        } else {
-
+        } else if (len < 8 && strength < 3) {
+            return "Weak";
+        } else if (strength < 4 && len < 12) {
+            return "Medium";
+        } else if (strength == 4 && len >= 10) {
+            return "Strong";
         }
-
-        return "";
+        return "Medium";
     }
 
     public static void main(String[] args) {
-        String password = randomPswd(12);
+        String password = randomPswd(10);
         System.out.println(password);
-        pswdStrength(password);
+        System.out.println(pswdStrength(password));
     }
 }
