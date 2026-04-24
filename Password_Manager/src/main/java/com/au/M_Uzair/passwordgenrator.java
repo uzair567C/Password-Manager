@@ -1,4 +1,4 @@
-package com.au.passwordgenrator;
+package com.au.M_Uzair;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -75,7 +75,7 @@ public class passwordgenrator {
 
     public static String copytoclipboard(String pswd) {
 
-        if (pswd == "") {
+        if ("".equals(pswd)) {
             return "No password to copy!";
         }
 
