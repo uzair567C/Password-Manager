@@ -1,5 +1,9 @@
 package com.au.passwordgenrator;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+
 public class passwordgenrator {
 
     static char[] Lowercase = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
@@ -69,9 +73,31 @@ public class passwordgenrator {
         return "Medium";
     }
 
+    public static String copytoclipboard(String pswd) {
+
+        if (pswd == "") {
+            return "No password to copy!";
+        }
+
+        StringSelection stringSelection = new StringSelection(pswd);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        // Use the stringSelection as the owner to help manage the transfer
+        clipboard.setContents(stringSelection, stringSelection);
+
+        // // Add a small pause if the application exits immediately
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return "Password copied to clipboard!";
+    }
+
     public static void main(String[] args) {
         String password = randomPswd(10);
         System.out.println(password);
         System.out.println(pswdStrength(password));
+
+        System.out.println(copytoclipboard(password));
     }
 }
