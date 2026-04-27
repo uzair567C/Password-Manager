@@ -1,11 +1,15 @@
-package dao;
+package com.au.ahmad.dao;
 
-import model.Credential;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.au.ahmad.model.Credential;
 
 /**
  * Data Access Object for the credentials table.
@@ -20,6 +24,29 @@ import java.util.List;
  * Every method uses PreparedStatement to prevent SQL injection.
  * Every method returns a clear success/failure signal or result list.
  */
+
+/* 
+Credential DAO
++--------------------+----------------------------+------------------------------------------------------+
+|function            | input                      | output                                               |
++--------------------+----------------------------+------------------------------------------------------+
+|addCredential       | Credential                 | boolean (success)                                    |
+|getAllCredentials   | int                        | List<Credential>                                     |
+|getCredentialById   | int, int                   | Credential (or null if not found / not owned by user)|
+|searchCredentials   | int, String                | List<Credential> (matching site/account)             |
+|searchBySite        | int, String                | List<Credential> (matching site)                     |
+|filterByPriority    | int, String                | List<Credential> (matching priority)                 |
+|getFavourites       | int                        | List<Credential> (favourite credentials)             |
+|updateCredential    | Credential                 | boolean (success)                                    |
+|toggleFavourite     | int, int                   | Boolean (new favourite state) or null on failure     |
+|deleteCredential    | int, int                   | boolean (success)                                    |
+|deleteAllCredentials| int                        | int (number of rows deleted)                         |
+|countCredentials    | int                        | int (total credentials for user)                     |
+|countByPriority     | int                        | int[] (counts for High, Medium, Low)                 |
++--------------------+----------------------------+------------------------------------------------------+
+
+*/
+
 public class CredentialDAO {
 
     // ─── Shared DB connection ─────────────────────────────────────────────────

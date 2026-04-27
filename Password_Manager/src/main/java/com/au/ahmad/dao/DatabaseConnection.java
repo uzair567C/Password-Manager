@@ -1,9 +1,23 @@
-package dao;
+package com.au.ahmad.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+/* 
+Database Connection
++------------------+----------------------------+------------------------------------------------------+
+|function          | input                      | output                                               |
++------------------+----------------------------+------------------------------------------------------+
+|DatabaseConnection| -                          | DatabaseConnection instance (singleton)              |
+|getInstance       | -                          | DatabaseConnection instance (singleton)              |
+|getConnection     | -                          | Connection object for executing SQL queries          |
+|initializeTables  | -                          | void (creates necessary tables if they don't exist)  |
+|close             | -                          | void (closes the database connection)                |
++------------------+----------------------------+------------------------------------------------------+
+
+*/
 
 public class DatabaseConnection {
 

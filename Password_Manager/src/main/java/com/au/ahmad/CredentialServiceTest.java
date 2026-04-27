@@ -1,9 +1,31 @@
-import service.CredentialService;
-import service.CredentialService.ServiceResult;
-import model.Credential;
+package com.au.ahmad;
+
 import java.util.List;
 
+import com.au.ahmad.model.Credential;
+import com.au.ahmad.service.CredentialService;
+import com.au.ahmad.service.CredentialService.ServiceResult;
+
+/*
+Credential Service Tests
++-------------------+------------------------------------------+------------------------------------------------------+
+|function           | input                                    | output                                               |
++-------------------+------------------------------------------+------------------------------------------------------+
+|addCredential      | int, String, String, String, String      | ServiceResult (success/failure message)              |
+|getAllCredentials  | int                                      | List<Credential>                                     |
+|search             | int, String                              | List<Credential> (matching site/account)             |
+|filterByPriority   | int, String                              | List<Credential> (matching priority)                 |
+|updateCredential   | int, int, String, String, String, String | ServiceResult (success/failure message)              |
+|toggleFavourite    | int, int                                 | ServiceResult (new favourite status)                 |
+|getTotalCredentials| int                                      | int (total count)                                    |
+|getPriorityCounts  | int                                      | int[] (counts for High, Medium, Low)                 |
+|deleteCredential   | int, int                                 | ServiceResult (success/failure message)              |
++-------------------+------------------------------------------+------------------------------------------------------+
+
+*/
+
 public class CredentialServiceTest {
+    
 
     private static final int TEST_USER_ID = 1;
     private static final CredentialService service = new CredentialService();

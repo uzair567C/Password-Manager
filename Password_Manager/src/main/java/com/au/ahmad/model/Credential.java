@@ -1,7 +1,36 @@
-package model;
+package com.au.ahmad.model;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
+/* 
+Credential Model
++---------------------+----------------------------------------------------------+--------------------------------------------------------------------+
+|function             | input                                                    | output                                                             |
++---------------------+----------------------------------------------------------+--------------------------------------------------------------------+
+|Credential           | int, int, String, String, String, boolean, LocalDateTime | Credential object with all fields initialized                      |
+|Credential           | int, String, String, String, String                      | Credential object with default values for id, favourite, createdAt |
+|getId                | -                                                        | int (credential ID)                                                |
+|getUserId            | -                                                        | int (associated user ID)                                           |
+|getSite              | -                                                        | String (site name)                                                 |
+|getAccountUsername   | -                                                        | String (account username)                                          |
+|getPassword          | -                                                        | String (account password)                                          |
+|getPriority          | -                                                        | String (credential priority)                                       |
+|isFavourite          | -                                                        | boolean (favourite status)                                         |
+|getCreatedAt         | -                                                        | LocalDateTime (creation timestamp)                                 |
+|getCreatedAtFormatted| -                                                        | String (formatted creation timestamp)                              |
+|setId                | int                                                      | void (sets credential ID)                                          | 
+|setUserId            | int                                                      | void (sets associated user ID)                                     |   
+|setSite              | String                                                   | void (sets site name)                                              |
+|setAccountUsername   | String                                                   | void (sets account username)                                       |
+|setPassword          | String                                                   | void (sets account password)                                       |
+|setPriority          | String                                                   | void (sets credential priority)                                    |
+|setFavourite         | boolean                                                  | void (sets favourite status)                                       |
+|setCreatedAt         | LocalDateTime                                            | void (sets creation timestamp)                                     |
+|toString             | -                                                        | String (string representation of the credential)                   |
++---------------------+----------------------------------------------------------+--------------------------------------------------------------------+
+
+*/
 
 public class Credential {
 

@@ -1,9 +1,23 @@
-package service;
-
-import dao.CredentialDAO;
-import model.Credential;
+package com.au.ahmad.service;
 
 import java.util.List;
+
+import com.au.ahmad.dao.CredentialDAO;
+import com.au.ahmad.model.Credential;
+
+/* 
+Credential Service
++-----------------+------------------------------------------+------------------------------------------------------+
+|function         | input                                    | output                                               |
++-----------------+------------------------------------------+------------------------------------------------------+
+|addCredential    | int, String, String, String, String      | ServiceResult (success/failure message)              |
+|getAllCredentials| int                                      | List<Credential>                                     |
+|search           | int, String                              | List<Credential> (matching site/account)             |
+|filterByPriority | int, String                              | List<Credential> (matching priority)                 |
+|updateCredential | int, int, String, String, String, String | ServiceResult                                        |
+|deleteCredential | int, int                                 | ServiceResult                                        |
++-----------------+------------------------------------------+------------------------------------------------------+
+*/
 
 public class CredentialService {
 

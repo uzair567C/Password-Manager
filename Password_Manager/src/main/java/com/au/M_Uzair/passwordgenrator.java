@@ -4,6 +4,18 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 
+/* 
+Password Generator 
++---------------+----------------------------+------------------------------------------------------+
+|function       | input                      | output                                               |
++---------------+----------------------------+------------------------------------------------------+
+|randomPswd     | int(number of characters)  | String (randomly generated password)                 |
+|pswdStrength   | String(password)           | String (Weak, Medium, Strong)                        |
+|copytoclipboard| String(password)        v  | String (confirmation message)                        |
++---------------+----------------------------+------------------------------------------------------+
+
+*/
+
 public class passwordgenrator {
 
     static char[] Lowercase = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
@@ -88,7 +100,7 @@ public class passwordgenrator {
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            System.out.println("Error: " + e.getMessage());
         }
         return "Password copied to clipboard!";
     }
