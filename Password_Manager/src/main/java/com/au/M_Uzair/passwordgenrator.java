@@ -106,10 +106,11 @@ public class passwordgenrator {
     }
 
     public static void main(String[] args) {
-        String password = randomPswd(10);
+        String password = randomPswd(0);
         System.out.println(password);
         System.out.println(pswdStrength(password));
 
         System.out.println(copytoclipboard(password));
+        
     }
 }
