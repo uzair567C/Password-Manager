@@ -5,12 +5,14 @@ package com.au.Bilal_Ahmad;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
+
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 
 
 public class dashboard {
-
      protected loginPage login;
     
     // UI components
@@ -62,7 +64,7 @@ public class dashboard {
 
             welcomeLabel = new JLabel("Welcome, User!", SwingConstants.LEFT);
             welcomeLabel.setFont(new Font("Arial", Font.BOLD, 28));
-            welcomeLabel.setBorder(new EmptyBorder(25, 25, 25, 20)); // Add some padding
+            welcomeLabel.setBorder(new EmptyBorder(35, 35, 0, 35)); // Add some padding
 
             themeToggle = login.createFlatButton("Light Mode ☀");
 
@@ -71,7 +73,7 @@ public class dashboard {
             toPanel.add(welcomeLabel, BorderLayout.WEST);
 
             JPanel topRightPanel = new JPanel();
-            topRightPanel.setBorder(new EmptyBorder(25, 0, 25, 25)); // Add some padding
+            topRightPanel.setBorder(new EmptyBorder(35, 35, 0, 35)); // Add some padding
             topRightPanel.setOpaque(false); // Make it transparent to show the background
             topRightPanel.add(themeToggle);
             topRightPanel.add(logoutButton);
@@ -81,23 +83,35 @@ public class dashboard {
         // mainPanel
 
             mainPanel = new JPanel(new BorderLayout());
-            mainPanel.setBorder(new EmptyBorder(25, 25, 25, 25)); // Add padding around the main panel
-            ((BorderLayout) mainPanel.getLayout()).setVgap(25); // Add vertical gap between components
+            mainPanel.setBorder(new EmptyBorder(35, 35, 35, 35)); // Add padding around the main panel
+            ((BorderLayout) mainPanel.getLayout()).setVgap(35); // Add vertical gap between components
             frame.add(mainPanel, BorderLayout.CENTER);
 
         // Search Panel
 
             searchPanel = new JPanel(new GridBagLayout());
 
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(0, 0, 0, 50); // Add spacing between components
+            gbc.weightx = 1.0;
+            gbc.weighty = 0.5;
+            gbc.fill = GridBagConstraints.BOTH;
+            gbc.gridy = 0;
+
             searchField = createSearchField();
+            gbc.gridx = 0; searchPanel.add(searchField , gbc);
             priorityBox = new JComboBox<>(new String[]{"All", "High", "Medium", "Low"});
-            addCredentialButton = new JButton("Add Credential");
-            addCredentialButton.setBackground(credentialBtnColor);
-            addCredentialButton.setForeground(Color.WHITE);
-            addCredentialButton.setFocusPainted(false);
-            searchPanel.add(searchField);
-            searchPanel.add(priorityBox);
-            searchPanel.add(addCredentialButton);
+            priorityBox.setPreferredSize(new Dimension(150,35));
+            addCredentialButton = createButton(" + Add Credential");
+            JPanel btnPanel= new JPanel(new FlowLayout(FlowLayout.LEFT));
+            btnPanel.add(priorityBox);
+            btnPanel.add(addCredentialButton);
+            gbc.insets = new Insets(0, 0, 0, 0);
+            gbc.weightx = 0;
+            gbc.weighty = 0;
+            gbc.fill = GridBagConstraints.NONE;
+            gbc.gridx = 1;
+            searchPanel.add(btnPanel , gbc);
             mainPanel.add(searchPanel , BorderLayout.NORTH);
 
 
@@ -110,23 +124,47 @@ public class dashboard {
                 {"myapp.com", "john_doe", "••••••••", "Low"}
             };
             credentialsTable = new JTable(data, columnNames);
+            credentialsTable.setRowHeight(40);
+            JTableHeader header = credentialsTable.getTableHeader();
+            header.setPreferredSize(new Dimension(0 , 35));
             JScrollPane tableScrollPane = new JScrollPane(credentialsTable);
             centerPanel.add(tableScrollPane, BorderLayout.CENTER);
             mainPanel.add(centerPanel, BorderLayout.CENTER);
+            
 
             logoutButton.addActionListener(e -> {
                 frame.dispose(); // Close the dashboard
                 login.frame.setVisible(true); // Show the login page again
                 login.logPassField.setText(""); // Clear the password field
             });
+
+            DefaultTableModel model = new DefaultTableModel(data , columnNames)
+            {
+                @Override
+                public boolean isCellEditable(int row , int column)
+                {
+                    return false;
+                }
+            };
             
+            credentialsTable.setModel(model);
+    }
+
     
+    protected JButton createButton(String text)
+    {
+        JButton btn = login.createFlatButton(text);
+        btn.setFont(new Font("SansSerif", Font.BOLD, 20));
+
+        return btn;
     }
 
 
     private JButton createLogoutButton(String text) {
         JButton btn = new JButton(text);
-        btn.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        btn.setFont(new Font("SansSerif", Font.BOLD, 20));
+        btn.setSize(new Dimension(100 , 50));
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btn.setContentAreaFilled(false);
         return btn;
     }
@@ -151,9 +189,11 @@ public class dashboard {
             }
         });
         return field;
-    }
 
     
+    }
+
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new dashboard(new loginPage()));
@@ -161,3 +201,4 @@ public class dashboard {
         login.frame.setVisible(true);
 }
 }
+

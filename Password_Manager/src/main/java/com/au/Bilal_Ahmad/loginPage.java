@@ -16,6 +16,9 @@ public class loginPage {
     JButton themeToggle;
 
     // Login Components
+    protected boolean databaseUser = false; // check login username with data base if match set databaseUser true
+    protected boolean databasePass = false; // check login password with data base if match set databasePassword true
+
     JLabel mainTitleLog, logUserLbl, logPassLbl, noAccountLbl;
     JTextField logUserField;
     JPasswordField logPassField;
@@ -24,6 +27,7 @@ public class loginPage {
     JPanel logUserPanel, logPassPanel;
 
     // Register Components
+    protected boolean regUserAvaliable = true;  // Check register Username with data if username aleady taken, Set the regUserAvaliable false otherwise don't set it
     JLabel mainTitleReg, regNameLbl, regUserLbl, regPassLbl, regConfPassLbl, haveAccountLbl;
     JTextField regNameField, regUserField;
     JPasswordField regPassField, regConfPassField;
@@ -123,14 +127,14 @@ public class loginPage {
         gbc.gridy = 3; gbc.insets = new Insets(5, 0, 5, 0); logInnerPanel.add(logPassPanel, gbc);
 
         logErrorLabel = new JLabel("Invalid Credentials!", SwingConstants.CENTER);
-        logErrorLabel.setForeground(new Color(239, 68, 68)); // Red-color for errors
+        logErrorLabel.setForeground(new Color(239, 68, 68));
         logErrorLabel.setVisible(false);
         gbc.gridy = 4; logInnerPanel.add(logErrorLabel, gbc);
 
         logSubmitBtn = createPrimaryButton("LOGIN");
         gbc.gridy = 5; gbc.insets = new Insets(20, 0, 10, 0); logInnerPanel.add(logSubmitBtn, gbc);
 
-        // Footer layout (Label + Action Button)  switch to register
+        // Footer layout (Label + Action Button)
         JPanel switchLogPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
         switchLogPanel.setOpaque(false);
         noAccountLbl = new JLabel("Don't have an account?");
@@ -201,7 +205,7 @@ public class loginPage {
         regSubmitBtn = createPrimaryButton("REGISTER");
         regGbc.gridy = 9; regGbc.insets = new Insets(15, 0, 10, 0); regInnerPanel.add(regSubmitBtn, regGbc);
 
-        // Footer layout (Label + Action Button) switch to login
+        // Footer layout (Label + Action Button)
         JPanel switchRegPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
         switchRegPanel.setOpaque(false);
         haveAccountLbl = new JLabel("Already have an account?");
@@ -234,21 +238,26 @@ public class loginPage {
             cLayout.show(cardPanel, "LoginCard");
         });
 
-        regSubmitBtn.addActionListener(e -> {  // here get the data from registration form and check the username if available then store data in database otherwise show error message 
+        regSubmitBtn.addActionListener(e -> {
             String name = regNameField.getText();
             String user = regUserField.getText();
             String pass = new String(regPassField.getPassword());
             String confirmPass = new String(regConfPassField.getPassword());
 
-            if (name.isEmpty() || user.isEmpty() || pass.isEmpty()) {
+            if(!user.isEmpty() && regUserAvaliable == false){
+                regErrorLabel.setText("Username not avaliable!");
+                regErrorLabel.setVisible(true);
+            } else if (name.isEmpty() || user.isEmpty() || pass.isEmpty() || confirmPass.isEmpty()) {
                 regErrorLabel.setText("Please fill in all fields!");
                 regErrorLabel.setVisible(true);
-            } else if (!pass.equals(confirmPass)) {
+            } else if(pass.length() < 8){
+                regErrorLabel.setText("Password must be at least 8 characters long!");
+            } else if (!pass.equals(confirmPass) && !confirmPass.isEmpty()) {
                 regErrorLabel.setText("Passwords do not match!");
                 regErrorLabel.setVisible(true);
                 regConfPassField.setText("");
-            } else {
-                regErrorLabel.setVisible(false);  // here if everything is correct and data store to database then this else will be executed and show success message and switch to login page otherwise show error message before this else statement
+            }else {
+                regErrorLabel.setVisible(false);
                 regNameField.setText("");
                 regUserField.setText("");
                 regPassField.setText("");
@@ -258,24 +267,7 @@ public class loginPage {
             }
         });
 
-        logSubmitBtn.addActionListener(e -> {
-            String user = logUserField.getText();
-            String pass = new String(logPassField.getPassword());
-
-            if (user.isEmpty() || pass.isEmpty()) { // validation for empty password or username
-                logErrorLabel.setText("Please enter both username and password!");
-                logErrorLabel.setVisible(true);
-
-                // here make if else for checking the username and password from database and if not correct then show error message otherwise go to dashboard
-            } else {
-                logErrorLabel.setVisible(false);
-                frame.setVisible(false);
-                dashboard dash = new dashboard(this);
-                dash.frame.setVisible(true);
-                dash.frame.revalidate();
-                dash.frame.repaint();
-            }
-        });
+        logSubmitBtn.addActionListener(e -> loginbtn());
 
         themeToggle.addActionListener(e -> {
             isDarkMode = !isDarkMode;
@@ -286,7 +278,47 @@ public class loginPage {
         // Initialize First View Theme
         applyTheme();
         cLayout.show(cardPanel, "LoginCard");
+
+        
     }
+
+    // login getter
+    public String getlogUsername(){return logUserField.getText();}
+    public String getlogPassword(){
+        String pass = new String(logPassField.getPassword());
+        return pass;
+    }
+    
+    // registration getter
+    public String getregName(){return regNameField.getText();}
+    public String getregUsername(){return regUserField.getText();}
+    public String getregPassword(){
+        String pass = new String(regPassField.getPassword());
+        return pass;
+    }
+    
+    private void loginbtn(){
+            String user = logUserField.getText();
+            String pass = new String(logPassField.getPassword());
+
+            if (user.isEmpty() || pass.isEmpty()) {
+                logErrorLabel.setText("Please enter both username and password!");
+                logErrorLabel.setVisible(true);
+            } else if (databaseUser == false){
+                logErrorLabel.setText("Invalid Username!");
+                logErrorLabel.setVisible(true);
+            } else if(databasePass == false){
+                logErrorLabel.setText("Invalid Password!");
+                logErrorLabel.setVisible(true);
+            }else {
+                logErrorLabel.setVisible(false);
+                frame.setVisible(false);
+                dashboard dash = new dashboard(this);
+                dash.frame.setVisible(true);
+                dash.frame.revalidate();
+                dash.frame.repaint();
+            } }
+
 
     // Helper: Logic to show and hide passwords
     private void setupToggleLogic(JPasswordField field, JButton toggleBtn, char defaultEcho) {
@@ -344,7 +376,7 @@ public class loginPage {
         return field;
     }
 
-    protected JButton createFlatButton(String text) { // protected so it can be accessed in dashboard for logout button creation with same style
+    protected JButton createFlatButton(String text) {
         JButton btn = new JButton(text);
         btn.setFont(new Font("SansSerif", Font.PLAIN, 16));
         btn.setContentAreaFilled(false);
@@ -391,6 +423,7 @@ public class loginPage {
         };
         for (JLabel lbl : allLabels) {
             lbl.setForeground(currentText);
+            lbl.setFont(new Font("SansSerif", Font.BOLD, 14));
         }
 
         // Apply Wrapper Input panels (border & background applied to the container, not text field itself)
@@ -425,8 +458,5 @@ public class loginPage {
         switchToRegBtn.setForeground(buttonBlue);
         switchToLogBtn.setForeground(buttonBlue);
     }
-
-    public static void main(String[] args) {
-        
-    }
+    
 }
