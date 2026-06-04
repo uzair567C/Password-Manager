@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Main-Class: com.recipe.Main
+Class-Path: lib/postgresql-42.7.1.jar lib/HikariCP-5.0.1.jar lib/flatlaf-3.2.5.jar lib/jbcrypt-0.4.jar lib/pdfbox-3.0.1.jar lib/gson-2.10.1.jar
+Created-By: Recipe Management System Team
+Built-Date: 2026-06-04
+Implementation-Title: Recipe Management System
+Implementation-Version: 2.0
+Implementation-Vendor: Recipe Management Team
+Specification-Title: Recipe Management System
+Specification-Version: 1.0
