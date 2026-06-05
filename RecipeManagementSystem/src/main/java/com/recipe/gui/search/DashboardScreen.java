@@ -152,7 +152,7 @@ public class DashboardScreen extends JPanel {  // Changed from JFrame to JPanel
                     DashboardStats stats = get();
                     updateUI(stats);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    // Dashboard load failed, show empty state
                 }
             }
         };

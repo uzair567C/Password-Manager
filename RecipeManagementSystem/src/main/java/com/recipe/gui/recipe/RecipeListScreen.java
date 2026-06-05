@@ -158,7 +158,6 @@ public class RecipeListScreen extends JPanel {
                     displayRecipes(currentRecipes);
                     String username = SessionManager.getInstance().getCurrentUser().getUsername();
                     userStatsLabel.setText("👨‍🍳 " + username + "'s personal recipes (" + currentRecipes.size() + " recipes)");
-                    System.out.println("Loaded " + currentRecipes.size() + " recipes for user: " + username);
                 } catch (InterruptedException | ExecutionException e) {
                     showError("Failed to load recipes: " + e.getMessage());
                 } finally {

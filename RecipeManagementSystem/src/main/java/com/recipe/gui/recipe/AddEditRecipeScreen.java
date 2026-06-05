@@ -282,11 +282,9 @@ public class AddEditRecipeScreen extends JPanel {
             java.nio.file.Files.copy(sourceFile.toPath(), destFile.toPath(), 
                 java.nio.file.StandardCopyOption.REPLACE_EXISTING);
             
-            System.out.println("Image copied to: " + destPath);
             return destPath;
             
         } catch (IOException e) {
-            System.err.println("Failed to copy image: " + e.getMessage());
             return sourceFile.getAbsolutePath();
         }
     }
@@ -325,7 +323,6 @@ public class AddEditRecipeScreen extends JPanel {
             } catch (IOException e) {
                 imagePreviewLabel.setText("Failed to load image: " + e.getMessage());
                 imagePreviewLabel.setIcon(null);
-                e.printStackTrace();
             }
         }
     }
@@ -661,7 +658,6 @@ public class AddEditRecipeScreen extends JPanel {
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(dialog, "Failed to save ingredient: " + ex.getMessage(), 
                     "Error", JOptionPane.ERROR_MESSAGE);
-                ex.printStackTrace();
             }
         });
         panel.add(addNewButton, gbc);
@@ -854,7 +850,6 @@ public class AddEditRecipeScreen extends JPanel {
             
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
         }
     }
     

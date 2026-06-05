@@ -11,20 +11,32 @@ public class DatabaseConnection {
     private static DatabaseConnection instance;
     private HikariDataSource dataSource;
     
-    private static final String DB_HOST = "localhost";
-    private static final String DB_PORT = "5432";
-    private static final String DB_NAME = "recipe_management";
-    private static final String DB_USER = "postgres";
-    private static final String DB_PASSWORD = "postgres"; // CHANGE THIS TO YOUR PASSWORD
+    private static final String DB_HOST;
+    private static final String DB_PORT;
+    private static final String DB_NAME;
+    private static final String DB_USER;
+    private static final String DB_PASSWORD;
+    
+    static {
+        // Load from environment variables with sensible defaults
+        DB_HOST = System.getenv("DB_HOST") != null ? System.getenv("DB_HOST") : "localhost";
+        DB_PORT = System.getenv("DB_PORT") != null ? System.getenv("DB_PORT") : "5432";
+        DB_NAME = System.getenv("DB_NAME") != null ? System.getenv("DB_NAME") : "recipe_management";
+        DB_USER = System.getenv("DB_USER") != null ? System.getenv("DB_USER") : "postgres";
+        DB_PASSWORD = System.getenv("DB_PASSWORD");
+        
+        // Validate critical configuration
+        if (DB_PASSWORD == null || DB_PASSWORD.isEmpty()) {
+            throw new RuntimeException("CRITICAL: DB_PASSWORD environment variable not set. " +
+                "Please set: export DB_PASSWORD=your_password");
+        }
+    }
     
     private DatabaseConnection() {
         try {
-            System.out.println("Initializing database connection...");
             initializeConnectionPool();
-            System.out.println("Database connection pool initialized successfully!");
         } catch (Exception e) {
-            System.err.println("Failed to initialize database connection: " + e.getMessage());
-            e.printStackTrace();
+            throw new RuntimeException("Failed to initialize database connection: " + e.getMessage(), e);
         }
     }
     
@@ -42,9 +54,6 @@ public class DatabaseConnection {
         config.setUsername(DB_USER);
         config.setPassword(DB_PASSWORD);
         
-        System.out.println("JDBC URL: " + jdbcUrl);
-        System.out.println("Username: " + DB_USER);
-        
         config.setMaximumPoolSize(10);
         config.setMinimumIdle(2);
         config.setConnectionTimeout(30000);
@@ -57,38 +66,28 @@ public class DatabaseConnection {
         
         try {
             dataSource = new HikariDataSource(config);
-            System.out.println("HikariCP DataSource created successfully!");
         } catch (Exception e) {
-            System.err.println("Failed to create HikariCP DataSource: " + e.getMessage());
-            throw e;
+            throw new RuntimeException("Failed to create HikariCP DataSource: " + e.getMessage(), e);
         }
     }
     
     public Connection getConnection() throws SQLException {
         if (dataSource == null || dataSource.isClosed()) {
-            System.out.println("DataSource is null or closed, reinitializing...");
             initializeConnectionPool();
         }
-        Connection conn = dataSource.getConnection();
-        System.out.println("Connection obtained successfully!");
-        return conn;
+        return dataSource.getConnection();
     }
     
     public void closePool() {
         if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close();
-            System.out.println("Connection pool closed.");
         }
     }
     
     public boolean testConnection() {
         try (Connection conn = getConnection()) {
-            boolean isValid = conn != null && !conn.isClosed();
-            System.out.println("Test connection result: " + isValid);
-            return isValid;
+            return conn != null && !conn.isClosed();
         } catch (SQLException e) {
-            System.err.println("Database connection test failed: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }

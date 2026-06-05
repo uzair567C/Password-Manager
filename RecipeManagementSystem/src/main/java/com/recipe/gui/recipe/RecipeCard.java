@@ -162,10 +162,7 @@ public class RecipeCard extends JPanel {
         }
         
         // Fallback: show first letter of recipe name
-        String firstLetter = recipe.title().substring(0, 1);
-        imageLabel.setIcon(null);
-        imageLabel.setText("<html><div style='text-align: center; font-size: 48px; color: #cccccc;'>" + firstLetter + "</div></html>");
-        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        setFallbackImage();
     }
     
     private void loadImageFromFile(File imgFile) {
@@ -179,13 +176,13 @@ public class RecipeCard extends JPanel {
                 setFallbackImage();
             }
         } catch (IOException e) {
-            System.err.println("Failed to load image from " + imgFile.getPath() + ": " + e.getMessage());
             setFallbackImage();
         }
     }
     
     private void setFallbackImage() {
-        String firstLetter = recipe.title().substring(0, 1);
+        String title = recipe.title();
+        String firstLetter = (title != null && !title.isEmpty()) ? title.substring(0, 1) : "?";
         imageLabel.setIcon(null);
         imageLabel.setText("<html><div style='text-align: center; font-size: 48px; color: #cccccc;'>" + firstLetter + "</div></html>");
     }

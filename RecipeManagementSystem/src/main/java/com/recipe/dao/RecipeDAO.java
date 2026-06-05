@@ -145,8 +145,10 @@ public class RecipeDAO {
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) {
                         int recipeId = rs.getInt("id");
-                        LocalDateTime createdAt = rs.getTimestamp("created_at").toLocalDateTime();
-                        LocalDateTime updatedAt = rs.getTimestamp("updated_at").toLocalDateTime();
+                        Timestamp createdTs = rs.getTimestamp("created_at");
+                        Timestamp updatedTs = rs.getTimestamp("updated_at");
+                        LocalDateTime createdAt = createdTs != null ? createdTs.toLocalDateTime() : LocalDateTime.now();
+                        LocalDateTime updatedAt = updatedTs != null ? updatedTs.toLocalDateTime() : LocalDateTime.now();
                         
                         saveIngredients(conn, recipeId, recipe.ingredients());
                         

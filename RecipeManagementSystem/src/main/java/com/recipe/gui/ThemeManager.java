@@ -3,6 +3,8 @@ package com.recipe.gui;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Window;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.prefs.Preferences;
 
 import javax.swing.BorderFactory;
@@ -18,6 +20,10 @@ import com.recipe.auth.SessionManager;
 import com.recipe.dao.UserDAO;
 import com.recipe.exceptions.DatabaseException;
 
+/**
+ * Centralized theme management system with listener support
+ * Manages all color schemes, theme switching, and component updates
+ */
 public class ThemeManager {
     
     private static ThemeManager instance;
@@ -30,34 +36,43 @@ public class ThemeManager {
     private JPanel contentPanel;
     private JButton themeToggleBtn;
     
-    // Color definitions
+    // List of components to notify when theme changes
+    private final List<ThemeListener> themeListeners = new ArrayList<>();
+    
+    // Color definitions - Professional consistent color scheme
     public static class ThemeColors {
-        // Light Theme Colors
-        public static final Color LIGHT_BG = new Color(245, 245, 245);
-        public static final Color LIGHT_SIDEBAR = new Color(46, 134, 222);
-        public static final Color LIGHT_CARD = Color.WHITE;
-        public static final Color LIGHT_TEXT = new Color(50, 50, 50);
-        public static final Color LIGHT_TEXT_MUTED = new Color(150, 150, 150);
-        public static final Color LIGHT_BORDER = new Color(230, 230, 230);
-        public static final Color LIGHT_BUTTON = new Color(52, 73, 94);
-        public static final Color LIGHT_BUTTON_HOVER = new Color(41, 128, 185);
+        // ===== LIGHT THEME COLOR PALETTE =====
+        public static final Color LIGHT_BG = new Color(248, 250, 252);              // Main background
+        public static final Color LIGHT_SIDEBAR = new Color(31, 78, 121);           // Sidebar (dark blue)
+        public static final Color LIGHT_CARD = new Color(255, 255, 255);            // Card/Panel background
+        public static final Color LIGHT_TEXT = new Color(33, 47, 61);               // Primary text
+        public static final Color LIGHT_TEXT_MUTED = new Color(133, 153, 173);      // Secondary text
+        public static final Color LIGHT_BORDER = new Color(226, 232, 240);          // Borders
+        public static final Color LIGHT_BUTTON = new Color(59, 130, 246);           // Primary button (blue)
+        public static final Color LIGHT_BUTTON_HOVER = new Color(37, 99, 235);      // Button hover
+        public static final Color LIGHT_BUTTON_ACTIVE = new Color(29, 78, 216);     // Button active
         
-        // Dark Theme Colors
-        public static final Color DARK_BG = new Color(30, 30, 36);
-        public static final Color DARK_SIDEBAR = new Color(25, 25, 30);
-        public static final Color DARK_CARD = new Color(40, 40, 48);
-        public static final Color DARK_TEXT = new Color(220, 220, 230);
-        public static final Color DARK_TEXT_MUTED = new Color(150, 150, 160);
-        public static final Color DARK_BORDER = new Color(55, 55, 65);
-        public static final Color DARK_BUTTON = new Color(60, 60, 70);
-        public static final Color DARK_BUTTON_HOVER = new Color(80, 80, 90);
+        // ===== DARK THEME COLOR PALETTE =====
+        public static final Color DARK_BG = new Color(13, 27, 42);                  // Main background (dark blue-black)
+        public static final Color DARK_SIDEBAR = new Color(31, 78, 121);            // Sidebar (matching blue)
+        public static final Color DARK_CARD = new Color(30, 50, 80);                // Card/Panel background
+        public static final Color DARK_TEXT = new Color(235, 241, 245);             // Primary text (light)
+        public static final Color DARK_TEXT_MUTED = new Color(156, 163, 175);       // Secondary text
+        public static final Color DARK_BORDER = new Color(55, 85, 140);             // Borders
+        public static final Color DARK_BUTTON = new Color(59, 130, 246);            // Primary button (blue)
+        public static final Color DARK_BUTTON_HOVER = new Color(96, 165, 250);      // Button hover
+        public static final Color DARK_BUTTON_ACTIVE = new Color(59, 130, 246);     // Button active
         
-        // Common Colors
-        public static final Color PRIMARY = new Color(46, 134, 222);
-        public static final Color PRIMARY_DARK = new Color(41, 128, 185);
-        public static final Color SUCCESS = new Color(46, 204, 113);
-        public static final Color WARNING = new Color(241, 196, 15);
-        public static final Color ERROR = new Color(231, 76, 60);
+        // ===== COMMON STATUS COLORS (Theme-independent) =====
+        public static final Color PRIMARY = new Color(59, 130, 246);                // Primary blue
+        public static final Color PRIMARY_DARK = new Color(37, 99, 235);            // Darker blue
+        public static final Color SUCCESS = new Color(34, 197, 94);                 // Green
+        public static final Color WARNING = new Color(250, 204, 21);                // Yellow
+        public static final Color ERROR = new Color(239, 68, 68);                   // Red
+        public static final Color INFO = new Color(59, 130, 246);                   // Info blue
+        
+        // ===== WHITE TEXT FOR BUTTONS =====
+        public static final Color TEXT_ON_PRIMARY = new Color(255, 255, 255);       // White text on buttons
     }
     
     private ThemeManager() {
@@ -73,6 +88,28 @@ public class ThemeManager {
         return instance;
     }
     
+    // ===== LISTENER MANAGEMENT =====
+    public void addThemeListener(ThemeListener listener) {
+        if (listener != null && !themeListeners.contains(listener)) {
+            themeListeners.add(listener);
+        }
+    }
+    
+    public void removeThemeListener(ThemeListener listener) {
+        themeListeners.remove(listener);
+    }
+    
+    private void notifyThemeListeners() {
+        for (ThemeListener listener : new ArrayList<>(themeListeners)) {
+            try {
+                listener.onThemeChanged(isDarkMode);
+            } catch (Exception e) {
+                // Listener error, continue with others
+            }
+        }
+    }
+    
+    // ===== COMPONENT REGISTRATION =====
     public void setMainFrame(JFrame frame) {
         this.mainFrame = frame;
     }
@@ -93,6 +130,7 @@ public class ThemeManager {
         this.themeToggleBtn = button;
     }
     
+    // ===== THEME APPLICATION =====
     public void applyTheme() {
         try {
             if (isDarkMode) {
@@ -102,43 +140,45 @@ public class ThemeManager {
             }
             
             customizeUIManager();
-            
-            for (Window window : Window.getWindows()) {
-                SwingUtilities.updateComponentTreeUI(window);
-                window.repaint();
-            }
-            
-            if (mainFrame != null) {
-                updateMainFrameColors();
-            }
-            
-            for (Frame frame : Frame.getFrames()) {
-                SwingUtilities.updateComponentTreeUI(frame);
-                frame.repaint();
-            }
+            updateAllFrames();
+            updateMainFrameColors();
+            notifyThemeListeners();
             
         } catch (Exception e) {
-            System.err.println("Failed to set theme: " + e.getMessage());
-            e.printStackTrace();
+            // Theme application failed, use default
+        }
+    }
+    
+    private void updateAllFrames() {
+        for (Window window : Window.getWindows()) {
+            SwingUtilities.updateComponentTreeUI(window);
+            window.repaint();
+        }
+        
+        for (Frame frame : Frame.getFrames()) {
+            SwingUtilities.updateComponentTreeUI(frame);
+            frame.repaint();
         }
     }
     
     private void customizeUIManager() {
-        UIManager.put("Button.arc", 8);
-        UIManager.put("Component.arc", 8);
+        UIManager.put("Button.arc", 10);
+        UIManager.put("Component.arc", 10);
         UIManager.put("TextComponent.arc", 8);
-        UIManager.put("ProgressBar.arc", 8);
-        UIManager.put("ScrollBar.thumbArc", 8);
+        UIManager.put("ProgressBar.arc", 10);
+        UIManager.put("ScrollBar.thumbArc", 10);
+        UIManager.put("Button.focusWidth", 0);
+        UIManager.put("Component.focusWidth", 0);
         
         if (isDarkMode) {
             UIManager.put("Panel.background", ThemeColors.DARK_BG);
-            UIManager.put("TextField.background", new Color(50, 50, 58));
-            UIManager.put("TextArea.background", new Color(50, 50, 58));
+            UIManager.put("TextField.background", new Color(40, 65, 115));
+            UIManager.put("TextArea.background", new Color(40, 65, 115));
             UIManager.put("TextField.foreground", ThemeColors.DARK_TEXT);
             UIManager.put("TextArea.foreground", ThemeColors.DARK_TEXT);
             UIManager.put("Label.foreground", ThemeColors.DARK_TEXT);
             UIManager.put("Button.background", ThemeColors.DARK_BUTTON);
-            UIManager.put("Button.foreground", ThemeColors.DARK_TEXT);
+            UIManager.put("Button.foreground", Color.WHITE);
             UIManager.put("Table.background", ThemeColors.DARK_CARD);
             UIManager.put("Table.foreground", ThemeColors.DARK_TEXT);
             UIManager.put("Table.gridColor", ThemeColors.DARK_BORDER);
@@ -162,6 +202,8 @@ public class ThemeManager {
             UIManager.put("OptionPane.background", ThemeColors.DARK_CARD);
             UIManager.put("OptionPane.messageForeground", ThemeColors.DARK_TEXT);
             UIManager.put("DesktopPane.background", ThemeColors.DARK_BG);
+            UIManager.put("CheckBox.foreground", ThemeColors.DARK_TEXT);
+            UIManager.put("RadioButton.foreground", ThemeColors.DARK_TEXT);
         } else {
             UIManager.put("Panel.background", ThemeColors.LIGHT_BG);
             UIManager.put("TextField.background", Color.WHITE);
@@ -200,53 +242,83 @@ public class ThemeManager {
     private void updateMainFrameColors() {
         if (mainFrame == null) return;
         
+        // Update sidebar with consistent colors
         if (sidebar != null) {
-            sidebar.setBackground(isDarkMode ? ThemeColors.DARK_SIDEBAR : ThemeColors.LIGHT_SIDEBAR);
+            sidebar.setBackground(getSidebarColor());
+            sidebar.setForeground(ThemeColors.TEXT_ON_PRIMARY);
+            applyThemeRecursive(sidebar);
         }
         
+        // Update top bar
         if (topBar != null) {
-            topBar.setBackground(isDarkMode ? ThemeColors.DARK_CARD : ThemeColors.LIGHT_CARD);
+            topBar.setBackground(getCardBackgroundColor());
+            topBar.setForeground(getTextColor());
             topBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, getBorderColor()));
+            applyThemeRecursive(topBar);
         }
         
+        // Update content panel
         if (contentPanel != null) {
             contentPanel.setBackground(getBackgroundColor());
+            contentPanel.setForeground(getTextColor());
+            applyThemeRecursive(contentPanel);
         }
         
+        // Update theme toggle button text
         if (themeToggleBtn != null) {
-            themeToggleBtn.setText(isDarkMode ? "🌙 Dark Mode" : "☀️ Light Mode");
+            themeToggleBtn.setText(isDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode");
         }
         
+        mainFrame.getContentPane().setBackground(getBackgroundColor());
         mainFrame.getContentPane().revalidate();
         mainFrame.getContentPane().repaint();
-        mainFrame.repaint();
     }
+    
+    /**
+     * Recursively apply theme colors to all components in a panel
+     */
+    private void applyThemeRecursive(java.awt.Component component) {
+        if (component instanceof JPanel) {
+            JPanel panel = (JPanel) component;
+            if (!isSpecialPanel(panel)) {
+                panel.setBackground(getBackgroundColor());
+                panel.setForeground(getTextColor());
+            }
+        }
+        
+        if (component instanceof java.awt.Container) {
+            java.awt.Container container = (java.awt.Container) component;
+            for (java.awt.Component child : container.getComponents()) {
+                if (child instanceof JButton) {
+                    JButton btn = (JButton) child;
+                    if (!isSpecialButton(btn)) {
+                        btn.setBackground(getButtonColor());
+                        btn.setForeground(ThemeColors.TEXT_ON_PRIMARY);
+                    }
+                }
+                applyThemeRecursive(child);
+            }
+        }
+    }
+    
+    private boolean isSpecialPanel(JPanel panel) {
+        // Don't override panels with special theming
+        return panel == sidebar || panel == topBar || panel == contentPanel;
+    }
+    
+    private boolean isSpecialButton(JButton btn) {
+        // Check if button has theme toggle or logout text
+        String text = btn.getText();
+        return text != null && (text.contains("Dark Mode") || text.contains("Light Mode") || 
+                                text.contains("Logout") || text.contains("🚪"));
+    }
+    
     
     public void toggleTheme() {
         isDarkMode = !isDarkMode;
         saveThemePreference();
-        
-        try {
-            if (isDarkMode) {
-                UIManager.setLookAndFeel(new FlatDarkLaf());
-            } else {
-                UIManager.setLookAndFeel(new FlatLightLaf());
-            }
-            
-            customizeUIManager();
-            
-            for (Window window : Window.getWindows()) {
-                SwingUtilities.updateComponentTreeUI(window);
-                window.repaint();
-            }
-            
-            updateMainFrameColors();
-            
-        } catch (Exception e) {
-            System.err.println("Failed to toggle theme: " + e.getMessage());
-        }
-        
-        System.out.println("Theme changed to " + getCurrentThemeName() + " Mode");
+        applyTheme();
+        notifyThemeListeners();
     }
     
     public void setDarkMode(boolean dark) {
@@ -254,6 +326,7 @@ public class ThemeManager {
             this.isDarkMode = dark;
             saveThemePreference();
             applyTheme();
+            notifyThemeListeners();
         }
     }
     
@@ -275,7 +348,7 @@ public class ThemeManager {
                     isDarkMode = "dark".equalsIgnoreCase(theme);
                 }
             } catch (DatabaseException e) {
-                System.err.println("Failed to load user theme: " + e.getMessage());
+                // Use default theme preference
             }
         }
     }
@@ -288,7 +361,7 @@ public class ThemeManager {
                 userDAO.saveThemePreference(SessionManager.getInstance().getCurrentUserId(), 
                     isDarkMode ? "dark" : "light");
             } catch (DatabaseException e) {
-                System.err.println("Failed to save user theme: " + e.getMessage());
+                // Theme preference save failed, continue anyway
             }
         }
     }

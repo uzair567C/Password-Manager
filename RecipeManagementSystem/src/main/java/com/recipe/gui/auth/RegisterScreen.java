@@ -66,8 +66,8 @@ public class RegisterScreen extends JFrame {
                 super.paintComponent(g);
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                GradientPaint gp = new GradientPaint(0, 0, new Color(52, 73, 94), 
-                                                      0, getHeight(), new Color(41, 128, 185));
+                GradientPaint gp = new GradientPaint(0, 0, new Color(25, 45, 85), 
+                                                      0, getHeight(), new Color(15, 25, 45));
                 g2d.setPaint(gp);
                 g2d.fillRect(0, 0, getWidth(), getHeight());
             }

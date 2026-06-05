@@ -109,12 +109,12 @@ public class LoginScreen extends JFrame {
         panel.setOpaque(false);
         
         JLabel titleLabel = new JLabel("🍽️ Recipe Manager", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 30));
         titleLabel.setForeground(Color.WHITE);
         
         JLabel subtitleLabel = new JLabel("Manage your recipes with ease", SwingConstants.CENTER);
         subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        subtitleLabel.setForeground(new Color(240, 240, 240));
+        subtitleLabel.setForeground(new Color(220, 230, 245));
         
         panel.add(titleLabel, BorderLayout.CENTER);
         panel.add(subtitleLabel, BorderLayout.SOUTH);
@@ -193,8 +193,8 @@ public class LoginScreen extends JFrame {
         
         registerButton = new JButton("Don't have an account? Register");
         registerButton.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        registerButton.setForeground(new Color(255, 255, 200));
-        registerButton.setBackground(new Color(52, 73, 94));
+        registerButton.setForeground(new Color(220, 230, 245));
+        registerButton.setBackground(new Color(41, 128, 185));
         registerButton.setBorderPainted(false);
         registerButton.setFocusPainted(false);
         registerButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -207,24 +207,23 @@ public class LoginScreen extends JFrame {
     
     private JButton createStyledButton(String text, Color bgColor) {
         JButton button = new JButton(text);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        button.setFont(new Font("Segoe UI", Font.BOLD, 17));
         button.setBackground(bgColor);
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
         button.setBorderPainted(false);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setPreferredSize(new Dimension(280, 45));
         
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                button.setBackground(bgColor.darker());
-                button.setFont(new Font("Segoe UI", Font.BOLD, 17));
+                button.setBackground(new Color(60, 160, 220));
             }
             
             @Override
             public void mouseExited(MouseEvent e) {
                 button.setBackground(bgColor);
-                button.setFont(new Font("Segoe UI", Font.BOLD, 16));
             }
         });
         
@@ -278,8 +277,15 @@ public class LoginScreen extends JFrame {
                     statusLabel.setForeground(new Color(200, 255, 200));
                     
                     Timer timer = new Timer(800, evt -> {
-                        new MainWindow().setVisible(true);
-                        dispose();
+                        try {
+                            MainWindow mainWindow = new MainWindow();
+                            mainWindow.setVisible(true);
+                            dispose();
+                        } catch (Exception ex) {
+                            System.err.println("Failed to create MainWindow:");
+                            ex.printStackTrace(System.err);
+                            showError("Failed to load main window: " + ex.getMessage());
+                        }
                     });
                     timer.setRepeats(false);
                     timer.start();
@@ -341,8 +347,8 @@ public class LoginScreen extends JFrame {
             super.paintComponent(g);
             Graphics2D g2d = (Graphics2D) g.create();
             g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-            GradientPaint gp = new GradientPaint(0, 0, new Color(46, 134, 222), 
-                                                  0, getHeight(), new Color(52, 73, 94));
+            GradientPaint gp = new GradientPaint(0, 0, new Color(25, 45, 85), 
+                                                  0, getHeight(), new Color(15, 25, 45));
             g2d.setPaint(gp);
             g2d.fillRect(0, 0, getWidth(), getHeight());
             g2d.dispose();

@@ -28,13 +28,11 @@ public class SessionManager {
     public void login(User user) {
         this.currentUser = user;
         this.loginTime = LocalDateTime.now();
-        System.out.println("User logged in: " + user.getUsername() + " at " + loginTime);
     }
     
     public void logout() {
         this.currentUser = null;
         this.loginTime = null;
-        System.out.println("User logged out");
     }
     
     public User getCurrentUser() {

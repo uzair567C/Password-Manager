@@ -66,11 +66,13 @@ public class MainWindow extends JFrame {
     private void initComponents() {
         setTitle("Recipe Management System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1280, 800);
+        setSize(1400, 900);
         setLocationRelativeTo(null);
-        setMinimumSize(new Dimension(1024, 600));
+        setMinimumSize(new Dimension(1100, 700));
+        setResizable(true);
         
         setLayout(new BorderLayout());
+        getContentPane().setBackground(ThemeManager.getInstance().getBackgroundColor());
         
         sidebar = createSidebar();
         add(sidebar, BorderLayout.WEST);
@@ -79,6 +81,8 @@ public class MainWindow extends JFrame {
         add(topBar, BorderLayout.NORTH);
         
         contentPanel = new JPanel(new CardLayout());
+        contentPanel.setBackground(ThemeManager.getInstance().getBackgroundColor());
+        contentPanel.setForeground(ThemeManager.getInstance().getTextColor());
         add(contentPanel, BorderLayout.CENTER);
         
         // Register screens
@@ -100,19 +104,21 @@ public class MainWindow extends JFrame {
     private JPanel createSidebar() {
         JPanel sidebar = new JPanel();
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
-        sidebar.setPreferredSize(new Dimension(250, 0));
-        sidebar.setBorder(new EmptyBorder(20, 0, 20, 0));
+        sidebar.setPreferredSize(new Dimension(280, 0));
+        sidebar.setBorder(new EmptyBorder(25, 15, 25, 15));
+        sidebar.setBackground(ThemeManager.getInstance().getSidebarColor());
         
         JPanel logoPanel = new JPanel();
         logoPanel.setOpaque(false);
         logoPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        logoPanel.setMaximumSize(new Dimension(250, 60));
         
         JLabel logoLabel = new JLabel("🍽️ Recipe Manager");
-        logoLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        logoLabel.setForeground(Color.WHITE);
+        logoLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        logoLabel.setForeground(ThemeManager.ThemeColors.TEXT_ON_PRIMARY);
         logoPanel.add(logoLabel);
         sidebar.add(logoPanel);
-        sidebar.add(Box.createRigidArea(new Dimension(0, 30)));
+        sidebar.add(Box.createRigidArea(new Dimension(0, 25)));
         
         dashboardBtn = createSidebarButton("📊 Dashboard", "dashboard");
         recipesBtn = createSidebarButton("📖 My Recipes", "recipes");
@@ -122,38 +128,40 @@ public class MainWindow extends JFrame {
         profileBtn = createSidebarButton("👤 My Profile", "profile");
         
         sidebar.add(dashboardBtn);
-        sidebar.add(Box.createRigidArea(new Dimension(0, 5)));
+        sidebar.add(Box.createRigidArea(new Dimension(0, 8)));
         sidebar.add(recipesBtn);
-        sidebar.add(Box.createRigidArea(new Dimension(0, 5)));
+        sidebar.add(Box.createRigidArea(new Dimension(0, 8)));
         sidebar.add(plannerBtn);
-        sidebar.add(Box.createRigidArea(new Dimension(0, 5)));
+        sidebar.add(Box.createRigidArea(new Dimension(0, 8)));
         sidebar.add(searchBtn);
-        sidebar.add(Box.createRigidArea(new Dimension(0, 5)));
+        sidebar.add(Box.createRigidArea(new Dimension(0, 8)));
         sidebar.add(nutritionBtn);
-        sidebar.add(Box.createRigidArea(new Dimension(0, 5)));
+        sidebar.add(Box.createRigidArea(new Dimension(0, 8)));
         sidebar.add(profileBtn);
         
         sidebar.add(Box.createVerticalGlue());
         
-        themeToggleBtn = new JButton("☀️ Light Mode");
+        themeToggleBtn = new JButton("🌙 Dark Mode");
         themeToggleBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        themeToggleBtn.setMaximumSize(new Dimension(200, 35));
-        themeToggleBtn.setBackground(new Color(60, 60, 70));
-        themeToggleBtn.setForeground(Color.WHITE);
+        themeToggleBtn.setMaximumSize(new Dimension(220, 40));
+        themeToggleBtn.setBackground(ThemeManager.ThemeColors.PRIMARY);
+        themeToggleBtn.setForeground(ThemeManager.ThemeColors.TEXT_ON_PRIMARY);
         themeToggleBtn.setFocusPainted(false);
         themeToggleBtn.setBorderPainted(false);
+        themeToggleBtn.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         themeToggleBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         themeToggleBtn.addActionListener(e -> ThemeManager.getInstance().toggleTheme());
         sidebar.add(themeToggleBtn);
-        sidebar.add(Box.createRigidArea(new Dimension(0, 10)));
+        sidebar.add(Box.createRigidArea(new Dimension(0, 12)));
         
         logoutBtn = new JButton("🚪 Logout");
         logoutBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        logoutBtn.setMaximumSize(new Dimension(200, 35));
-        logoutBtn.setBackground(new Color(231, 76, 60));
-        logoutBtn.setForeground(Color.WHITE);
+        logoutBtn.setMaximumSize(new Dimension(220, 40));
+        logoutBtn.setBackground(ThemeManager.ThemeColors.ERROR);
+        logoutBtn.setForeground(ThemeManager.ThemeColors.TEXT_ON_PRIMARY);
         logoutBtn.setFocusPainted(false);
         logoutBtn.setBorderPainted(false);
+        logoutBtn.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         logoutBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         logoutBtn.addActionListener(e -> logout());
         sidebar.add(logoutBtn);
@@ -165,27 +173,46 @@ public class MainWindow extends JFrame {
     private JButton createSidebarButton(String text, String screenName) {
         JButton button = new JButton(text);
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        button.setMaximumSize(new Dimension(210, 40));
+        button.setMaximumSize(new Dimension(230, 45));
         button.setFocusPainted(false);
         button.setBorderPainted(false);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        button.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        button.setBackground(ThemeManager.ThemeColors.PRIMARY);
+        button.setForeground(ThemeManager.ThemeColors.TEXT_ON_PRIMARY);
+        
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(ThemeManager.ThemeColors.PRIMARY_DARK);
+            }
+            
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(ThemeManager.ThemeColors.PRIMARY);
+            }
+        });
+        
         button.addActionListener(e -> switchScreen(screenName));
         return button;
     }
     
     private JPanel createTopBar() {
         JPanel topBar = new JPanel(new BorderLayout());
-        topBar.setBorder(new EmptyBorder(10, 20, 10, 20));
+        topBar.setBorder(new EmptyBorder(15, 25, 15, 25));
+        topBar.setPreferredSize(new Dimension(0, 65));
+        topBar.setBackground(ThemeManager.getInstance().getCardBackgroundColor());
+        topBar.setForeground(ThemeManager.getInstance().getTextColor());
         
         User currentUser = SessionManager.getInstance().getCurrentUser();
         userLabel = new JLabel("Welcome, " + (currentUser != null ? currentUser.getUsername() : "Guest") + "!");
-        userLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        userLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        userLabel.setForeground(ThemeManager.getInstance().getTextColor());
         topBar.add(userLabel, BorderLayout.WEST);
         
         JLabel dateLabel = new JLabel(java.time.LocalDate.now().toString());
-        dateLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        dateLabel.setForeground(new Color(150, 150, 150));
+        dateLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        dateLabel.setForeground(ThemeManager.getInstance().getMutedTextColor());
         topBar.add(dateLabel, BorderLayout.EAST);
         
         return topBar;
